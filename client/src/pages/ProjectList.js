@@ -4,11 +4,13 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { Link } from "react-router-dom"
+import { useAuth } from "../context/AuthContext"
 
 // Base URL for API requests
 const API_BASE_URL = "http://localhost:5173"
 
 const ProjectList = () => {
+  const {currentUser} = useAuth()
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
@@ -27,7 +29,7 @@ const ProjectList = () => {
     try {
       setLoading(true)
       const response = await axios.get(`${API_BASE_URL}/api/projects`)
-      setProjects(response.data.filter())
+      setProjects(response.data.filter((project) => project.userId === currentUser.id)) // Filter projects by faculty ID
     } catch (error) {
       console.error("Error fetching projects:", error)
       toast.error("Failed to load projects")

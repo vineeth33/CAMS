@@ -29,7 +29,7 @@ const Dashboard = () => {
         ])
 
         setStats(statsResponse.data)
-        setRecentProjects(projectsResponse.data)
+        setRecentProjects(projectsResponse.data.filter((project) => project.userId === currentUser.id))
       } catch (error) {
         console.error("Error fetching dashboard data:", error)
         toast.error("Failed to load dashboard data")
