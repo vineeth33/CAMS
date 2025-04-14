@@ -24,7 +24,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const [statsResponse, projectsResponse] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/projects/stats`),
+          axios.get(`${API_BASE_URL}/api/projects/stats?user=${currentUser.id}`),
           axios.get(`${API_BASE_URL}/api/projects/recent`),
         ])
 

@@ -417,25 +417,26 @@ app.get("/api/projects/recent", authenticateToken, (req, res) => {
 
 app.get("/api/projects/stats", authenticateToken, (req, res) => {
   try {
+    // User ID
+    const userId = req.query.user;
+
     // Read projects from Excel
     const projects = readExcelFile(projectsFilePath)
-
-    // Calculate statistics
-    const totalProjects = projects.length
 
     // Assuming a project is active if it was created within the last 6 months
     const sixMonthsAgo = new Date()
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
-    const activeProjects = projects.filter((project) => new Date(project.createdAt) >= sixMonthsAgo).length
+    const userProjects = projects.filter((project) => project.userId === userId);
+    const activeProjects = userProjects.filter((project) => new Date(project.createdAt).getMonth() - new Date().getMonth() <= project.duration).length;
 
-    const completedProjects = totalProjects - activeProjects
+    const completedProjects = userProjects.length - activeProjects
 
     // Calculate total amount sanctioned
-    const totalAmount = projects.reduce((sum, project) => sum + (Number.parseInt(project.amountSanctioned) || 0), 0)
+    const totalAmount = userProjects.reduce((sum, project) => sum + (Number.parseInt(project.amountSanctioned) || 0), 0)
 
     res.json({
-      totalProjects,
+      totalProjects: userProjects.length,
       activeProjects,
       completedProjects,
       totalAmount,
