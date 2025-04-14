@@ -138,7 +138,7 @@ npm start
 \`\`\`
 
 5. **Access the Application**
-- Frontend: [http://localhost:3000](http://localhost:3000)
+- Frontend: [http://localhost:3001](http://localhost:3001)
 - Backend API: [http://localhost:5000](http://localhost:5000)
 
 ### Default Test Account
