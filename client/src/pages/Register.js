@@ -29,25 +29,21 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Basic validation
     if (!formData.name || !formData.email || !formData.password || !formData.department) {
       toast.error("Please fill in all required fields")
       return
     }
 
-    // College email validation
     if (!formData.email.endsWith(".edu") && !formData.email.endsWith(".ac.in")) {
       toast.error("Please use a valid college email address")
       return
     }
 
-    // Password match validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match")
       return
     }
 
-    // Password strength validation
     if (formData.password.length < 8) {
       toast.error("Password must be at least 8 characters long")
       return
@@ -56,15 +52,12 @@ const Register = () => {
     setIsLoading(true)
 
     try {
-      console.log("Submitting registration form:", formData)
       const result = await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
         department: formData.department,
       })
-
-      console.log("Registration result:", result)
 
       if (result.success) {
         toast.success("Registration successful! Please login.")
@@ -81,95 +74,46 @@ const Register = () => {
   }
 
   return (
-    <div className="flex justify-center items-center py-8">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-blue-600">Register for CAMS</h2>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-              Full Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="John Doe"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+    <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-100 px-4">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
+        <div className="flex justify-center mb-6">
+          <div className="bg-gray-700 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12zm-1-5a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zm0-3a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1z" clipRule="evenodd" />
+            </svg>
           </div>
+        </div>
+        <h2 className="text-2xl font-bold text-center mb-8 text-purple-400">Register for CAMS</h2>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              College Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="your.name@college.edu"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {[
+            { id: 'name', label: 'Full Name', type: 'text', placeholder: 'John Doe' },
+            { id: 'email', label: 'College Email', type: 'email', placeholder: 'your.name@college.edu' },
+            { id: 'department', label: 'Department', type: 'text', placeholder: 'Computer Science' },
+            { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
+            { id: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: '••••••••' },
+          ].map(({ id, label, type, placeholder }) => (
+            <div key={id}>
+              <label className="block text-sm font-medium mb-2" htmlFor={id}>
+                {label}
+              </label>
+              <input
+                id={id}
+                name={id}
+                type={type}
+                className="bg-gray-700 border border-gray-600 rounded-lg w-full py-3 px-4 text-gray-100 placeholder-gray-400 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+                placeholder={placeholder}
+                value={formData[id]}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          ))}
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="department">
-              Department
-            </label>
-            <input
-              id="department"
-              name="department"
-              type="text"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Computer Science"
-              value={formData.department}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
+          <div>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+              className={`bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 w-full transition-colors duration-200 flex justify-center items-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
               disabled={isLoading}
             >
               {isLoading ? "Registering..." : "Register"}
@@ -177,10 +121,10 @@ const Register = () => {
           </div>
         </form>
 
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-600">
+        <div className="mt-8 pt-6 border-t border-gray-700">
+          <p className="text-center text-gray-400">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-500 hover:text-blue-700">
+            <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200">
               Login here
             </Link>
           </p>
@@ -191,4 +135,3 @@ const Register = () => {
 }
 
 export default Register
-
