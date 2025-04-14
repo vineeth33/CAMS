@@ -177,6 +177,7 @@ const ProjectList = () => {
                 className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
               >
                 <option value="">All Years</option>
+                <option value="2024-2025">2024-2025</option>
                 <option value="2023-2024">2023-2024</option>
                 <option value="2022-2023">2022-2023</option>
                 <option value="2021-2022">2021-2022</option>

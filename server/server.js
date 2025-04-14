@@ -197,6 +197,45 @@ const authenticateToken = (req, res, next) => {
   })
 }
 
+app.get("/api/notifications", authenticateToken, (req, res) => {
+  try {
+    const projects = readExcelFile(projectsFilePath)
+    const currentDate = new Date()
+    const userId = req.user.id
+
+    const newProjects = projects.filter(p => {
+      const created = new Date(p.createdAt)
+      const diff = (currentDate - created) / (1000 * 60 * 60 * 24)
+      return diff <= 15 && p.userId === userId
+    })
+
+    const expiringProjects = projects.filter(p => {
+      const created = new Date(p.createdAt)
+      const duration = parseInt(p.duration || "0")
+      const deadline = new Date(created.getTime() + duration * 30 * 24 * 60 * 60 * 1000)
+      const daysLeft = (deadline - currentDate) / (1000 * 60 * 60 * 24)
+      return daysLeft > 0 && daysLeft <= 15 && p.userId === userId
+    })
+
+    const notifications = [
+      ...newProjects.map(p => ({
+        title: "New Project Added",
+        message: `${p.title} - ${p.industryName}`,
+      })),
+      ...expiringProjects.map(p => ({
+        title: "Project Nearing Completion",
+        message: `${p.title} - ${p.industryName}`,
+      })),
+    ]
+
+    res.json(notifications)
+  } catch (err) {
+    console.error("Notification fetch error:", err)
+    res.status(500).json({ message: "Failed to fetch notifications" })
+  }
+})
+
+
 // Routes
 
 // Auth routes - NO authentication middleware here
@@ -340,7 +379,7 @@ app.post(
         ...projectData,
         agreementDocument: files.agreementDocument ? files.agreementDocument[0].filename : null,
         billSettlementProof: files.billSettlementProof ? files.billSettlementProof[0].filename : null,
-        createdAt: new Date().toISOString(),
+        createdAt: req.body.createdAt || new Date().toISOString(),
         userId: req.user.id,
       }
 
@@ -665,10 +704,12 @@ const sendNotifications = async () => {
 }
 
 // Schedule notifications to run every 15 days
-cron.schedule("0 0 */15 * *", () => {
-  console.log("Running scheduled notifications")
+// Runs every 1 minute for testing
+cron.schedule("* * * * *", () => {
+  console.log("🚀 Running test notification job")
   sendNotifications()
 })
+
 
 // Add this code at the bottom of server.js, before app.listen
 // This creates a test user when the server starts
