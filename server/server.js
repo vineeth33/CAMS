@@ -14,8 +14,20 @@ require('dotenv').config();
 const app = express()
 const PORT = process.env.PORT || 5173
 
+const allowedOrigins = [
+  'http://localhost:3001',
+  'https://scintillating-gelato-17f243.netlify.app'
+];
+
 app.use(cors({
-  origin: "http://localhost:3001",
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
